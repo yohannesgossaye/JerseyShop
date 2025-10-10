@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"fmt"
+	"strings"
 
 	custmeraccountdto "github.com/yohannesgossaye/internal/domain/dto/customeraccount"
 	model "github.com/yohannesgossaye/internal/domain/model/customeraccount"
 	"github.com/yohannesgossaye/internal/persistence"
+	errormessage "github.com/yohannesgossaye/pkgs/message/errormessage"
 	"github.com/yohannesgossaye/pkgs/message/localization"
 	"github.com/yohannesgossaye/pkgs/utils/email"
 	helper "github.com/yohannesgossaye/pkgs/utils/helper"
@@ -36,6 +38,10 @@ func (s *CustomerService) CreateCustomer(ctx context.Context, req model.Customer
 	// create customer in DB
 	createdCustomer, err := s.repo.CreateCustomer(ctx, &req)
 	if err != nil {
+
+		if strings.Contains(strings.ToLower(err.Error()), "duplicate") || strings.Contains(err.Error(), "23505") {
+			return model.Customer{}, errormessage.ErrEmailDuplicate
+		}
 		return model.Customer{}, err
 	}
 
@@ -61,13 +67,9 @@ func (s *CustomerService) LoginCustomer(ctx context.Context, email string, passw
 	if err != nil {
 		return model.Customer{}, errors.New(localization.ErrInvalidCredentials.Message)
 	}
-	// check active
+	// ensure account is active
 	if !customer.IsActive {
 		return model.Customer{}, errors.New(localization.ErrCustomerNotActive.Message)
-	}
-	// check password and email
-	if customer.Email != email || customer.Password != password {
-		return model.Customer{}, errors.New(localization.ErrInvalidCredentials.Message)
 	}
 	return customer, nil
 }
@@ -75,8 +77,20 @@ func (s *CustomerService) LoginCustomer(ctx context.Context, email string, passw
 func (s *CustomerService) VerifyCustomerOtp(ctx context.Context, email, otpCode string) (custmeraccountdto.VerifyOtpResponse, error) {
 	customer, err := s.repo.VerifyCustomerOtp(ctx, email, otpCode)
 	if err != nil {
-		fmt.Println("Error verifying OTP: 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉", err)
-		return custmeraccountdto.VerifyOtpResponse{}, err
+
+		switch err {
+		case errormessage.ErrInvalidOtp:
+			return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrInvalidOtp.Message)
+		case errormessage.ErrNotExistOtp:
+			return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrNotCorrectOtp.Message)
+		case errormessage.ErrOtpExpired:
+			return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrOtpExpired.Message)
+		case errormessage.ErrAlreadyVerified:
+			return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrCustomerAlreadyVerified.Message)
+		default:
+
+			return custmeraccountdto.VerifyOtpResponse{}, err
+		}
 	}
 	// Just issue JWT and return the response.
 	token, err := helper.GenerateJWT(customer.ID, customer.Email)
@@ -87,6 +101,6 @@ func (s *CustomerService) VerifyCustomerOtp(ctx context.Context, email, otpCode 
 	return custmeraccountdto.VerifyOtpResponse{
 		AccessToken: token,
 		Customer:    customer,
-		Message:     "Account verified successfully",
+		// Message:     "Account verified successfully",
 	}, nil
 }

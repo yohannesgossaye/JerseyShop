@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	customerrouting "github.com/yohannesgossaye/internal/glue/routing/customeraccount"
+	appmw "github.com/yohannesgossaye/internal/handlers/middleware"
 	customerhandler "github.com/yohannesgossaye/internal/handlers/rest/http/customeraccount"
 
 	"github.com/go-chi/chi/v5"
@@ -21,6 +22,11 @@ func InitRouter(router chi.Router, handler *customerhandler.CustomerAccountHandl
 
 	// Register user routes on the SAME router
 	customerrouting.RegisterRoutes(router, handler)
+
+	router.Route("/protected", func(r chi.Router) {
+		r.Use(appmw.AuthMiddleware)
+
+	})
 
 	return router
 }

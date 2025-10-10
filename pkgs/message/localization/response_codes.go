@@ -23,9 +23,17 @@ var ResponseCodesList = []ResponseCode{
 	// error codes
 	ErrCustomerNotFound,
 	ErrCustomerNotVerified,
+	ErrCustomerAlreadyVerified,
 	ErrCustomerLogin,
 	ErrCustomerPassword,
 	ErrCustomerCreate,
+	ErrInvalidOtp,
+	ErrNotCorrectOtp,
+	ErrOtpExpired,
+	ErrCustomerCreateDecodeFailed,
+	ErrCustomerNotActive,
+	ErrInvalidCredentials,
+	ErrCustomerEmailAlreadyExists,
 }
 
 var (
@@ -63,6 +71,12 @@ var (
 		Message:    MsgVerifiedFailed,
 		Type:       "error",
 	}
+	ErrCustomerAlreadyVerified = ResponseCode{
+		Code:       "ERROR_CUSTOMER_ALREADY_VERIFIED",
+		StatusCode: StatusConflict,
+		Message:    MsgCustomerAlreadyVerified,
+		Type:       "error",
+	}
 	ErrCustomerLogin = ResponseCode{
 		Code:       "ERROR_CUSTOMER_LOGIN",
 		StatusCode: StatusNotFound,
@@ -93,6 +107,12 @@ var (
 		Message:    MsgInvalidOtp,
 		Type:       "error",
 	}
+	ErrNotCorrectOtp = ResponseCode{
+		Code:       "ERROR_NOT_CORRECT_OTP",
+		StatusCode: StatusNotFound,
+		Message:    MsgNotCorrectOtp,
+		Type:       "error",
+	}
 	ErrOtpExpired = ResponseCode{
 		Code:       "ERROR_OTP_EXPIRED",
 		StatusCode: StatusNotFound,
@@ -115,6 +135,12 @@ var (
 		Code:       "ERROR_INVALID_CREDENTIALS",
 		StatusCode: StatusNotFound,
 		Message:    MsgInvalidCredentials,
+		Type:       "error",
+	}
+	ErrCustomerEmailAlreadyExists = ResponseCode{
+		Code:       "ERROR_CUSTOMER_EMAIL_ALREADY_EXISTS",
+		StatusCode: StatusConflict,
+		Message:    MsgCustomerEmailAlreadyExists,
 		Type:       "error",
 	}
 

@@ -40,10 +40,13 @@ const (
 	// customer account register error messages
 	MsgCreateCustomer                    = "Failed to create customer"
 	MsgVerifiedFailed                    = "Failed to verify customer"
+	MsgCustomerAlreadyVerified           = "Customer already verified"
 	MsgCreatedCustomerEmailAlreadyExists = "Customer email already exists"
+	MsgCustomerEmailAlreadyExists        = "Customer email already exists"
 	MsgEmailDuplicate                    = "Customer email already exists"
 	MsgOtpExpired                        = "OTP has expired"
 	MsgInvalidOtp                        = "Invalid OTP provided provided by customer"
+	MsgNotCorrectOtp                     = "OTP provided by customer is not correct"
 	MsgPassword                          = "Password is too short"
 	MsgPasswordNotMatch                  = "Passwords do not match"
 	MsgLoginCustomer                     = "Failed to login customer"

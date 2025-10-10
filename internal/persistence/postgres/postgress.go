@@ -166,6 +166,10 @@ func (r *CustomerRepositary) VerifyCustomerOtp(ctx context.Context, email string
 		return customeraccount.Customer{}, err
 	}
 
+	// if already active and no otp exists, treat as already verified
+	if isActive && !otpCodePtr.Valid {
+		return customeraccount.Customer{}, errormessage.ErrAlreadyVerified
+	}
 	if !otpCodePtr.Valid || otpCodePtr.String != otpCode {
 		return customeraccount.Customer{}, errormessage.ErrInvalidOtp
 	}
