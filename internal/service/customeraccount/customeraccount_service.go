@@ -75,27 +75,10 @@ func (s *CustomerService) LoginCustomer(ctx context.Context, email string, passw
 func (s *CustomerService) VerifyCustomerOtp(ctx context.Context, email, otpCode string) (custmeraccountdto.VerifyOtpResponse, error) {
 	customer, err := s.repo.VerifyCustomerOtp(ctx, email, otpCode)
 	if err != nil {
+		fmt.Println("Error verifying OTP: 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉 🎉", err)
 		return custmeraccountdto.VerifyOtpResponse{}, err
 	}
-
-	// check expiration
-	if time.Now().After(customer.OtpExpiresAt) {
-		return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrOtpExpired.Message)
-	}
-	// check otp valid
-	if customer.OtpCode != otpCode {
-		return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrInvalidOtp.Message)
-	}
-
-	// mark active
-	customer.IsActive = true
-	customer.OtpCode = ""
-	err = s.repo.UpdateCustomer(ctx, &customer)
-	if err != nil {
-		return custmeraccountdto.VerifyOtpResponse{}, err
-	}
-
-	// generate JWT token
+	// Just issue JWT and return the response.
 	token, err := helper.GenerateJWT(customer.ID, customer.Email)
 	if err != nil {
 		return custmeraccountdto.VerifyOtpResponse{}, err

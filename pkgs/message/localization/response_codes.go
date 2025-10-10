@@ -39,14 +39,14 @@ var (
 
 	SucessCustomerVerified = ResponseCode{
 		Code:       "SUCCESS_CUSTOMER_VERIFIED",
-		StatusCode: StatusCreated,
-		Message:    MsgSuccessCreateCustomer,
+		StatusCode: StatusOK,
+		Message:    MsgSuccessVerifyCustomer,
 		Type:       "success",
 	}
 	SucessCustomerLogin = ResponseCode{
 		Code:       "SUCCESS_CUSTOMER_LOGIN",
-		StatusCode: StatusCreated,
-		Message:    MsgSuccessCreateCustomer,
+		StatusCode: StatusOK,
+		Message:    MsgSuccessLoginCustomer,
 		Type:       "success",
 	}
 
@@ -79,6 +79,12 @@ var (
 		Code:       "ERROR_CUSTOMER_CREATE",
 		StatusCode: StatusNotFound,
 		Message:    MsgCreateCustomer,
+		Type:       "error",
+	}
+	ErrCustomerEmailDuplicate = ResponseCode{
+		Code:       "ERROR_CUSTOMER_EMAIL_DUPLICATE",
+		StatusCode: StatusNotFound,
+		Message:    MsgEmailDuplicate,
 		Type:       "error",
 	}
 	ErrInvalidOtp = ResponseCode{

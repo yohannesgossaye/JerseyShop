@@ -41,6 +41,7 @@ const (
 	MsgCreateCustomer                    = "Failed to create customer"
 	MsgVerifiedFailed                    = "Failed to verify customer"
 	MsgCreatedCustomerEmailAlreadyExists = "Customer email already exists"
+	MsgEmailDuplicate                    = "Customer email already exists"
 	MsgOtpExpired                        = "OTP has expired"
 	MsgInvalidOtp                        = "Invalid OTP provided provided by customer"
 	MsgPassword                          = "Password is too short"

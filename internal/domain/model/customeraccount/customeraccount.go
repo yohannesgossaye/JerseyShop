@@ -17,8 +17,8 @@ type Customer struct {
 	DateOfBirth  string    `json:"date_of_birth"`
 	IsActive     bool      `json:"is_active"`
 	IsAdmin      bool      `json:"is_admin"`
-	OtpCode      string    `json:"otp_code"`
-	OtpExpiresAt time.Time `json:"otp_expires_at"`
+	OtpCode      string    `json:"-"`
+	OtpExpiresAt time.Time `json:"-"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }

@@ -43,13 +43,13 @@ func (h *CustomerAccountHandler) CreateCustomer(w http.ResponseWriter, r *http.R
 	customer, err := h.service.CreateCustomer(r.Context(), CreatedMap)
 	if err != nil {
 		h.log.Errorf("Error creating customer: %v", err)
-		localization.SendErrorByCodeResponse(w, err.Error())
+		localization.SendErrorByCodeResponse(w, localization.ErrCustomerCreate.Code)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	h.log.Infof("customer created successfully")
-	response.SendSuccessResponse(w, http.StatusCreated, "customer created successfully", customer, nil)
+	response.SendSuccessResponse(w, http.StatusCreated, "Customer Registered successfully", customer, nil)
 }
 
 func (h *CustomerAccountHandler) LoginCustomer(w http.ResponseWriter, r *http.Request) {
@@ -95,7 +95,15 @@ func (h *CustomerAccountHandler) VerifyCustomerOtp(w http.ResponseWriter, r *htt
 	customer, err := h.service.VerifyCustomerOtp(r.Context(), req.Email, req.OTPCode)
 	if err != nil {
 		h.log.Errorf("Error verifying customer otp: %v", err)
-		localization.SendErrorByCodeResponse(w, localization.ErrCustomerNotVerified.Code)
+		// Map specific messages to specific error codes
+		switch err.Error() {
+		case localization.ErrInvalidOtp.Message:
+			localization.SendErrorByCodeResponse(w, localization.ErrInvalidOtp.Code)
+		case localization.ErrOtpExpired.Message:
+			localization.SendErrorByCodeResponse(w, localization.ErrOtpExpired.Code)
+		default:
+			localization.SendErrorByCodeResponse(w, localization.ErrCustomerNotVerified.Code)
+		}
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

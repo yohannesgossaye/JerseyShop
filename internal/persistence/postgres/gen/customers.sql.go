@@ -36,6 +36,14 @@ RETURNING
     last_name,
     email,
     phone_number,
+    country,
+    city,
+    address,
+    zip_code,
+    gender,
+    date_of_birth,
+    otp_code,
+    otp_expires_at,
     is_active,
     is_admin,
     created_at,
@@ -59,15 +67,23 @@ type CreateCustomerParams struct {
 }
 
 type CreateCustomerRow struct {
-	ID          int       `json:"id"`
-	FirstName   string    `json:"first_name"`
-	LastName    string    `json:"last_name"`
-	Email       string    `json:"email"`
-	PhoneNumber string    `json:"phone_number"`
-	IsActive    bool      `json:"is_active"`
-	IsAdmin     bool      `json:"is_admin"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID           int         `json:"id"`
+	FirstName    string      `json:"first_name"`
+	LastName     string      `json:"last_name"`
+	Email        string      `json:"email"`
+	PhoneNumber  string      `json:"phone_number"`
+	Country      string      `json:"country"`
+	City         string      `json:"city"`
+	Address      string      `json:"address"`
+	ZipCode      string      `json:"zip_code"`
+	Gender       string      `json:"gender"`
+	DateOfBirth  pgtype.Date `json:"date_of_birth"`
+	OtpCode      *string     `json:"otp_code"`
+	OtpExpiresAt time.Time   `json:"otp_expires_at"`
+	IsActive     bool        `json:"is_active"`
+	IsAdmin      bool        `json:"is_admin"`
+	CreatedAt    time.Time   `json:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
 }
 
 func (q *Queries) CreateCustomer(ctx context.Context, arg *CreateCustomerParams) (*CreateCustomerRow, error) {
@@ -93,6 +109,14 @@ func (q *Queries) CreateCustomer(ctx context.Context, arg *CreateCustomerParams)
 		&i.LastName,
 		&i.Email,
 		&i.PhoneNumber,
+		&i.Country,
+		&i.City,
+		&i.Address,
+		&i.ZipCode,
+		&i.Gender,
+		&i.DateOfBirth,
+		&i.OtpCode,
+		&i.OtpExpiresAt,
 		&i.IsActive,
 		&i.IsAdmin,
 		&i.CreatedAt,

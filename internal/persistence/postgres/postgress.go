@@ -68,17 +68,35 @@ func (r *CustomerRepositary) CreateCustomer(ctx context.Context, req *customerac
 	if err != nil {
 		return customeraccount.Customer{}, err
 	}
-	// map returned row to domain model
+	// map returned row to domain model (include optional fields)
+	dobStr := ""
+	if customer.DateOfBirth.Valid {
+		dobStr = customer.DateOfBirth.Time.Format("2006-01-02")
+	}
+
+	otpCode := ""
+	if customer.OtpCode != nil {
+		otpCode = *customer.OtpCode
+	}
+
 	return customeraccount.Customer{
-		ID:          int64(customer.ID),
-		FirstName:   customer.FirstName,
-		LastName:    customer.LastName,
-		Email:       customer.Email,
-		PhoneNumber: customer.PhoneNumber,
-		IsActive:    customer.IsActive,
-		IsAdmin:     customer.IsAdmin,
-		CreatedAt:   customer.CreatedAt,
-		UpdatedAt:   customer.UpdatedAt,
+		ID:           int64(customer.ID),
+		FirstName:    customer.FirstName,
+		LastName:     customer.LastName,
+		Email:        customer.Email,
+		PhoneNumber:  customer.PhoneNumber,
+		Country:      customer.Country,
+		City:         customer.City,
+		Address:      customer.Address,
+		ZipCode:      customer.ZipCode,
+		Gender:       customer.Gender,
+		DateOfBirth:  dobStr,
+		IsActive:     customer.IsActive,
+		IsAdmin:      customer.IsAdmin,
+		OtpCode:      otpCode,
+		OtpExpiresAt: customer.OtpExpiresAt,
+		CreatedAt:    customer.CreatedAt,
+		UpdatedAt:    customer.UpdatedAt,
 	}, nil
 }
 
@@ -141,8 +159,9 @@ func (r *CustomerRepositary) VerifyCustomerOtp(ctx context.Context, email string
 		&updatedAt,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			// return customeraccount.Customer{}, fmtError("invalid otp or email")
-			return customeraccount.Customer{}, errormessage.ErrInvalidOtp
+
+			return customeraccount.Customer{}, fmtError("invalid otp or email")
+			// return customeraccount.Customer{}, errormessage.ErrInvalidOtp
 		}
 		return customeraccount.Customer{}, err
 	}
@@ -166,6 +185,12 @@ func (r *CustomerRepositary) VerifyCustomerOtp(ctx context.Context, email string
 		LastName:    lastName.String,
 		Email:       emailDB.String,
 		PhoneNumber: phoneNumber.String,
+		Country:     country.String,
+		City:        city.String,
+		Address:     address.String,
+		ZipCode:     zipCode.String,
+		Gender:      gender.String,
+		DateOfBirth: dateOfBirth.Time.Format("2006-01-02"),
 		IsActive:    true,
 		IsAdmin:     isAdmin,
 		CreatedAt:   createdAt,
