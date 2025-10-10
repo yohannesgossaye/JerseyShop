@@ -2,6 +2,7 @@ package customeraccount
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	custmeraccountdto "github.com/yohannesgossaye/internal/domain/dto/customeraccount"
 	model "github.com/yohannesgossaye/internal/domain/model/customeraccount"
 	"github.com/yohannesgossaye/internal/persistence"
+	"github.com/yohannesgossaye/pkgs/message/localization"
 	"github.com/yohannesgossaye/pkgs/utils/email"
 	helper "github.com/yohannesgossaye/pkgs/utils/helper"
 )
@@ -54,7 +56,20 @@ func (s *CustomerService) CreateCustomer(ctx context.Context, req model.Customer
 }
 
 func (s *CustomerService) LoginCustomer(ctx context.Context, email string, password string) (model.Customer, error) {
-	return s.repo.LoginCustomer(ctx, email, password)
+
+	customer, err := s.repo.LoginCustomer(ctx, email, password)
+	if err != nil {
+		return model.Customer{}, errors.New(localization.ErrInvalidCredentials.Message)
+	}
+	// check active
+	if !customer.IsActive {
+		return model.Customer{}, errors.New(localization.ErrCustomerNotActive.Message)
+	}
+	// check password and email
+	if customer.Email != email || customer.Password != password {
+		return model.Customer{}, errors.New(localization.ErrInvalidCredentials.Message)
+	}
+	return customer, nil
 }
 
 func (s *CustomerService) VerifyCustomerOtp(ctx context.Context, email, otpCode string) (custmeraccountdto.VerifyOtpResponse, error) {
@@ -65,7 +80,11 @@ func (s *CustomerService) VerifyCustomerOtp(ctx context.Context, email, otpCode 
 
 	// check expiration
 	if time.Now().After(customer.OtpExpiresAt) {
-		return custmeraccountdto.VerifyOtpResponse{}, fmt.Errorf("OTP expired")
+		return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrOtpExpired.Message)
+	}
+	// check otp valid
+	if customer.OtpCode != otpCode {
+		return custmeraccountdto.VerifyOtpResponse{}, errors.New(localization.ErrInvalidOtp.Message)
 	}
 
 	// mark active

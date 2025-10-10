@@ -12,6 +12,7 @@ import (
 
 	"github.com/yohannesgossaye/internal/domain/model/customeraccount"
 	"github.com/yohannesgossaye/internal/persistence/postgres/gen"
+	errormessage "github.com/yohannesgossaye/pkgs/message/errormessage"
 )
 
 type CustomerRepositary struct {
@@ -140,16 +141,17 @@ func (r *CustomerRepositary) VerifyCustomerOtp(ctx context.Context, email string
 		&updatedAt,
 	); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return customeraccount.Customer{}, fmtError("invalid otp or email")
+			// return customeraccount.Customer{}, fmtError("invalid otp or email")
+			return customeraccount.Customer{}, errormessage.ErrInvalidOtp
 		}
 		return customeraccount.Customer{}, err
 	}
 
 	if !otpCodePtr.Valid || otpCodePtr.String != otpCode {
-		return customeraccount.Customer{}, fmtError("invalid otp")
+		return customeraccount.Customer{}, errormessage.ErrInvalidOtp
 	}
 	if !otpExpiresAt.Valid || time.Now().After(otpExpiresAt.Time) {
-		return customeraccount.Customer{}, fmtError("otp expired")
+		return customeraccount.Customer{}, errormessage.ErrOtpExpired
 	}
 
 	// mark verified using generated query
@@ -191,7 +193,7 @@ func (r *CustomerRepositary) UpdateCustomer(ctx context.Context, customer *custo
 	return nil
 }
 
-// small helper to return formatted error (avoids importing fmt repeatedly)
+// small helper to return formatted error
 func fmtError(msg string) error {
 	return errors.New(msg)
 }
