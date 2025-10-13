@@ -5,13 +5,56 @@ services:
     image: postgres:15-alpine
     container_name: JerseyAppPostgres
     environment:
-      POSTGRES_DB: users_db
+      POSTGRES_DB: JerseyApp_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+  temporal-postgres:
+    image: postgres:15
+    container_name: temporal-postgres
+    environment:
+      - POSTGRES_USER=temporal
+      - POSTGRES_PASSWORD=temporal
+      - POSTGRES_DB=temporal
+    ports:
+      - "5433:5432"
+    volumes:
+      - temporal_pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  temporal:
+    image: temporalio/auto-setup:1.24
+    container_name: temporal
+    environment:
+      - DB=postgres12
+      - DB_PORT=5432
+      - POSTGRES_USER=temporal
+      - POSTGRES_PWD=temporal
+      - POSTGRES_DB=temporal
+      - POSTGRES_SEEDS=temporal-postgres
+    ports:
+      - "7233:7233"
+    depends_on:
+      - temporal-postgres
+    networks:
+      - app-network
+
+  temporal-ui:
+    image: temporalio/ui:latest
+    container_name: temporal-ui
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+      - TEMPORAL_CORS_ORIGINS=http://localhost:8080,http://127.0.0.1:8080
+    ports:
+      - "8081:8080"
+    depends_on:
+      - temporal
     networks:
       - app-network
 
@@ -26,13 +69,16 @@ services:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_NAME=JerseyApp_db
+      - TEMPORAL_HOSTPORT=temporal:7233
     depends_on:
       - postgres
+      - temporal
     networks:
       - app-network
 
 volumes:
   postgres_data:
+  temporal_pgdata:
 
 networks:
   app-network:

@@ -24,7 +24,7 @@ func InitRouter(router chi.Router, handler *customerhandler.CustomerAccountHandl
 	customerrouting.RegisterRoutes(router, handler)
 
 	router.Route("/protected", func(r chi.Router) {
-		r.Use(appmw.AuthMiddleware)
+		r.Use(appmw.JWTAuthMiddleware)
 
 	})
 

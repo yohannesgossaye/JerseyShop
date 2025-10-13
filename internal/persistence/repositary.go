@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+
 	model "github.com/yohannesgossaye/internal/domain/model/customeraccount"
 )
 

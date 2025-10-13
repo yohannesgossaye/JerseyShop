@@ -3,18 +3,23 @@ package customeraccount
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"fmt"
-	"strings"
+	"os"
 
 	custmeraccountdto "github.com/yohannesgossaye/internal/domain/dto/customeraccount"
 	model "github.com/yohannesgossaye/internal/domain/model/customeraccount"
 	"github.com/yohannesgossaye/internal/persistence"
+	"github.com/yohannesgossaye/internal/service/customeraccount/core"
 	errormessage "github.com/yohannesgossaye/pkgs/message/errormessage"
 	"github.com/yohannesgossaye/pkgs/message/localization"
+	workflows "github.com/yohannesgossaye/pkgs/temporalworkflow"
 	"github.com/yohannesgossaye/pkgs/utils/email"
 	helper "github.com/yohannesgossaye/pkgs/utils/helper"
+	enumspb "go.temporal.io/api/enums/v1"
+	"go.temporal.io/sdk/client"
 )
 
 type CustomerService struct {
@@ -30,35 +35,46 @@ func NewCustomerService(repo persistence.CustomerRepositary, emailSender email.S
 }
 
 func (s *CustomerService) CreateCustomer(ctx context.Context, req model.Customer) (model.Customer, error) {
-	// generate OTP
+	fmt.Printf(" Service received customer: %+v\n", req)
+
+	// Generate OTP for account verification
 	otp := helper.GenerateOtp()
 	req.OtpCode = otp
 	req.OtpExpiresAt = time.Now().Add(time.Hour)
 
-	// create customer in DB
-	createdCustomer, err := s.repo.CreateCustomer(ctx, &req)
+	hostPort := os.Getenv("TEMPORAL_HOSTPORT")
+	if hostPort == "" {
+		hostPort = "127.0.0.1:7233"
+	}
+	// Create Temporal client
+	c, err := client.NewClient(client.Options{HostPort: hostPort})
 	if err != nil {
+		return model.Customer{}, err
+	}
+	defer c.Close()
 
+	workflowOptions := client.StartWorkflowOptions{
+		ID:                    "user_signup_" + req.Email,
+		TaskQueue:             "USER_TASK_QUEUE_V2",
+		WorkflowIDReusePolicy: enumspb.WORKFLOW_ID_REUSE_POLICY_ALLOW_DUPLICATE,
+	}
+
+	input := core.Toworkflowinput(req)
+	fmt.Printf(" Starting workflow asynchronously with input: %+v\n", input)
+
+	// Start workflow **without waiting for completion**
+	we, err := c.ExecuteWorkflow(ctx, workflowOptions, workflows.UserSignupWorkflow, input)
+	if err != nil {
 		if strings.Contains(strings.ToLower(err.Error()), "duplicate") || strings.Contains(err.Error(), "23505") {
 			return model.Customer{}, errormessage.ErrEmailDuplicate
 		}
 		return model.Customer{}, err
 	}
 
-	// send welcome email and OTP asynchronously
-	go func(emailTo string, fullName string, otp string) {
-		body := fmt.Sprintf(
-			"Hi %s,\n\nThanks for registering with our service!\n\nYour OTP is: %s\nThis OTP will expire in 1 hour.",
-			fullName, otp,
-		)
-		if err := s.emailSender.Send(emailTo, "Welcome 🎉", body); err != nil {
-			fmt.Printf("❌ Failed to send email to %s: %v\n", emailTo, err)
-		} else {
-			fmt.Printf("📧 Welcome email sent to %s\n", emailTo)
-		}
-	}(createdCustomer.Email, createdCustomer.FirstName+" "+createdCustomer.LastName, otp)
+	fmt.Println(" Workflow started asynchronously", "WorkflowID", we.GetID(), "RunID", we.GetRunID())
 
-	return createdCustomer, nil
+	// Immediately return the customer object to API caller
+	return req, nil
 }
 
 func (s *CustomerService) LoginCustomer(ctx context.Context, email string, password string) (model.Customer, error) {

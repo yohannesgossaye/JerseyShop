@@ -42,6 +42,7 @@ func (h *CustomerAccountHandler) CreateCustomer(w http.ResponseWriter, r *http.R
 		return
 	}
 	CreatedMap := core.MapCreateCustomerRequestToModel(req)
+	h.log.Infof("🔍 Calling service with mapped data: %+v", CreatedMap)
 	customer, err := h.service.CreateCustomer(r.Context(), CreatedMap)
 	if err != nil {
 		h.log.Errorf("Error creating customer: %v", err)
@@ -57,6 +58,7 @@ func (h *CustomerAccountHandler) CreateCustomer(w http.ResponseWriter, r *http.R
 		}
 		return
 	}
+	h.log.Infof("✅ Service returned customer: %+v", customer)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	h.log.Infof("customer created successfully")

@@ -21,7 +21,7 @@ func RegisterRoutes(router chi.Router, customerAccountHandler customerport.Custo
 			Path:    "/customer/login",
 			Handler: customerAccountHandler.LoginCustomer,
 			Middlewares: []func(next http.Handler) http.Handler{
-				appmw.AuthMiddleware,
+				appmw.JWTAuthMiddleware,
 			},
 		},
 		{

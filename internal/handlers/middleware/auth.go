@@ -17,8 +17,7 @@ const (
 	emailContextKey  contextKey = "email"
 )
 
-// JWTAuthMiddleware validates Bearer tokens and injects user claims into request context.
-func AuthMiddleware(next http.Handler) http.Handler {
+func JWTAuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" || !strings.HasPrefix(strings.ToLower(authHeader), "bearer ") {

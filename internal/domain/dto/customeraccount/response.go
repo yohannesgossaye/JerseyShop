@@ -26,5 +26,4 @@ type LoginResponse struct {
 type VerifyOtpResponse struct {
 	AccessToken string         `json:"access_token"`
 	Customer    model.Customer `json:"customer"`
-	Message     string         `json:"message"`
 }

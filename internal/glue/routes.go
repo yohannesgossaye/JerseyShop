@@ -15,13 +15,14 @@ type Route struct {
 
 func RegisterRoutes(router chi.Router, routes []Route) {
 	for _, route := range routes {
-
+		// wrap handler with any per-route middlewares (outermost last)
 		var h http.Handler = route.Handler
 		if len(route.Middlewares) > 0 {
 			for i := len(route.Middlewares) - 1; i >= 0; i-- {
 				h = route.Middlewares[i](h)
 			}
 		}
+
 		switch route.Method {
 		case http.MethodGet:
 			router.Get(route.Path, h.ServeHTTP)
