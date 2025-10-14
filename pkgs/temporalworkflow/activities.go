@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	podb "github.com/yohannesgossaye/internal/persistence/postgres"
+	podb "github.com/yohannesgossaye/internal/persistence/postgres/customeraccount"
 	"github.com/yohannesgossaye/pkgs/utils/email"
 )
 
@@ -37,7 +37,6 @@ func SaveUserActivity(ctx context.Context, input UserWorkflowInput) (string, err
 		user.OtpExpiresAt = time.Now().Add(time.Hour)
 	}
 
-	fmt.Printf("🔍 Mapped user model: %+v\n", user)
 	created, err := repo.CreateCustomer(ctx, &user)
 	if err != nil {
 

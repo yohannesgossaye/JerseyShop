@@ -12,13 +12,10 @@ CREATE TABLE IF NOT EXISTS customers (
     zip_code VARCHAR(20) NOT NULL,
     gender VARCHAR(20) NOT NULL,
     date_of_birth DATE NOT NULL,
-
     is_active BOOLEAN NOT NULL DEFAULT FALSE,
     is_admin BOOLEAN NOT NULL DEFAULT FALSE,
-
     otp_code VARCHAR(6),
     otp_expires_at TIMESTAMP,
-    
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );

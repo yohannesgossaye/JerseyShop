@@ -1,7 +1,7 @@
 package initiator
 
 import (
-	"github.com/yohannesgossaye/internal/persistence/postgres"
+	"github.com/yohannesgossaye/internal/persistence/postgres/customeraccount"
 	customerservice "github.com/yohannesgossaye/internal/service/customeraccount"
 	"github.com/yohannesgossaye/pkgs/utils/email"
 )

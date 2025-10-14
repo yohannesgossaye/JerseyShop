@@ -11,7 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/yohannesgossaye/internal/domain/model/customeraccount"
-	"github.com/yohannesgossaye/internal/persistence/postgres/gen"
+	"github.com/yohannesgossaye/internal/persistence/postgres/customeraccount/gen"
 	errormessage "github.com/yohannesgossaye/pkgs/message/errormessage"
 )
 

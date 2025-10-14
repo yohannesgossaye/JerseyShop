@@ -6,10 +6,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/yohannesgossaye/internal/persistence/postgres"
+	postgres "github.com/yohannesgossaye/internal/persistence/postgres/customeraccount"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	migrate "github.com/yohannesgossaye/internal/persistence/postgres"
 )
 
 func InitDatabase() *pgxpool.Pool {
@@ -51,7 +52,7 @@ func InitDatabase() *pgxpool.Pool {
 	}
 
 	// Run migrations
-	if err := postgres.RunMigrations(connStr); err != nil {
+	if err := migrate.RunMigrations(connStr); err != nil {
 		log.Fatalf("Failed to run migrations: %v", err)
 	}
 
