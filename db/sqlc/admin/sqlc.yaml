@@ -1,12 +1,12 @@
 version: "2"
 sql:
-  - schema: db/migration
-    queries: db/query
+  - schema: ../../migration
+    queries: ../../query/admin.sql
     engine: postgresql
     gen:
       go:
         package: gen
-        out: "../internal/persistence/postgres/admin/gen"
+        out: ../../../internal/persistence/postgres/admin/gen
         sql_package: pgx/v5
         emit_json_tags: true
         emit_interface: true

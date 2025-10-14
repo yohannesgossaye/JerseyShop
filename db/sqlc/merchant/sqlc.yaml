@@ -1,12 +1,12 @@
 version: "2"
 sql:
-  - schema: db/migration/merchant
-    queries: db/query/merchant
+  - schema: ../../migration
+    queries: ../../query/merchant.sql
     engine: postgresql
     gen:
       go:
         package: gen
-        out: internal/persistence/postgres/merchant/gen
+        out: ../../../internal/persistence/postgres/merchant/gen
         sql_package: pgx/v5
         emit_json_tags: true
         emit_interface: true
