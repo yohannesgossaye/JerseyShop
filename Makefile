@@ -40,7 +40,7 @@ docker-down:
 
 # Generate SQLC code (root default)
 sqlc-generate:
-	sqlc generate --file db/sqlc.yaml || true
+	sqlc generate --file db/customeraccount/sqlc.yaml || true
 
 # Generate Admin SQLC
 sqlc-admin:
