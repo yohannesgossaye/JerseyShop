@@ -53,4 +53,12 @@ const (
 	MsgUserNotFound                      = "User not found"
 	MsgCustomerNotActive                 = "Customer is not active"
 	MsgInvalidCredentials                = "Invalid email or password"
+
+	// admin
+	MsgAdminDecodeFailed       = "Failed to Decode admin to create "
+	MsgAdminEmailAlreadyExists = "Admin email already exists"
+	MsgAdminCreate             = "Failed to create admin"
+	MsgAdminLogin              = "Failed to login admin"
+	MsgAdminNotGet             = "Failed to get admin"
+	MsgAdminDelete             = "Failed to delete admin"
 )

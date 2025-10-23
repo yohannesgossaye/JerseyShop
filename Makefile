@@ -22,6 +22,10 @@ build:
 run:
 	go run ./cmd/api/main.go
 
+# Run the application
+run-worker:
+	go run ./cmd/worker/main.go
+
 # Run tests
 test:
 	go test ./...

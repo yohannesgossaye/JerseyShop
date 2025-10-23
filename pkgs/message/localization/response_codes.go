@@ -192,4 +192,45 @@ var (
 		Message:    MsgValidationFailed,
 		Type:       "error",
 	}
+	ErrAdminCreateDecodeFailed= ResponseCode{
+		Code:      "ERROR_ADMIN_CREATE_DECODE_FAILED",
+		StatusCode: StatusBadRequest,
+		Message: MsgAdminDecodeFailed,
+		Type: "error",
+	}
+	ErrAdminEmailAlreadyExists= ResponseCode{
+		Code:      "ERROR_ADMIN_EMAIL_ALREADY_EXISTS",
+		StatusCode: StatusConflict,
+		Message: MsgAdminEmailAlreadyExists,
+		Type: "error",
+	}
+	ErrAdminCreate= ResponseCode{
+		Code:      "ERROR_ADMIN_CREATE",
+		StatusCode: StatusBadRequest,
+		Message: MsgAdminCreate,
+		Type: "error",
+	}
+	AdminCreatedSuccessfully= ResponseCode{
+		Code:      "ADMIN_CREATED_SUCCESSFULLY",
+		StatusCode: StatusCreated,
+		Message: MsgAdminCreate,
+		Type: "success",
+	}
+	ErrAdminLogin= ResponseCode{
+		Code:      "ERROR_ADMIN_LOGIN",
+		StatusCode: StatusNotFound,
+		Message: MsgAdminLogin,
+		Type: "error",
+	}
+	ErrAdminGet = ResponseCode{
+		Code: "ERROR_ADMIN_GET_BY_ID",
+		StatusCode: StatusNotFound,
+		Message: MsgAdminNotGet,
+		Type: "error",
+	}
+	ErrAdminDelete= ResponseCode{
+		Code: "ERROR_ADMIN_DELETE",
+		StatusCode: StatusNotFound,
+		Message: MsgAdminDelete,
+	}
 )

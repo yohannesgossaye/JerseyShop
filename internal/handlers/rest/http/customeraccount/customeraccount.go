@@ -7,7 +7,8 @@ import (
 
 	"github.com/yohannesgossaye/internal/domain/dto/customeraccount"
 	core "github.com/yohannesgossaye/internal/handlers/rest/http/customeraccount/core"
-	CustomerService "github.com/yohannesgossaye/internal/service/customeraccount"
+	"github.com/yohannesgossaye/internal/service"
+
 	response "github.com/yohannesgossaye/pkgs/message/Response"
 	errormessage "github.com/yohannesgossaye/pkgs/message/errormessage"
 	"github.com/yohannesgossaye/pkgs/message/localization"
@@ -16,11 +17,11 @@ import (
 )
 
 type CustomerAccountHandler struct {
-	service CustomerService.CustomerService
+	service service.CustomerAccountService
 	log     logger.Logger
 }
 
-func NewCustomerAccountHandler(service CustomerService.CustomerService, log logger.Logger) *CustomerAccountHandler {
+func NewCustomerAccountHandler(service service.CustomerAccountService, log logger.Logger) *CustomerAccountHandler {
 	return &CustomerAccountHandler{
 		service: service,
 		log:     log,
