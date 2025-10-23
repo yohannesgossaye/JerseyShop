@@ -7,5 +7,5 @@ import (
 )
 
 func InitHandler(service *customerservice.CustomerService, log logger.Logger) *customerhandler.CustomerAccountHandler {
-	return customerhandler.NewCustomerAccountHandler(*service, log)
+	return customerhandler.NewCustomerAccountHandler(service, log)
 }

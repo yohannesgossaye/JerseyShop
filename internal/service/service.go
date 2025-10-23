@@ -12,6 +12,7 @@ type CustomerAccountService interface {
 	CreateCustomer(ctx context.Context, req modelcustomer.Customer) (modelcustomer.Customer, error)
 	LoginCustomer(ctx context.Context, email string, password string) (modelcustomer.Customer, error)
 	VerifyCustomerOtp(ctx context.Context, email, otpCode string) (custmeraccountdto.VerifyOtpResponse, error)
+	
 }
 
 type AdminAccountService interface {
